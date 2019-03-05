@@ -27,6 +27,20 @@ struct token {  // alignas(64)
     size_t        size:16;  ///< size of the string
 };
 
+
+/**
+ * @brief Aligns on pagesize - malloc info assumed to be 8
+ * Doubly linked list of array of tokens
+ */
+struct tokens {
+    struct tokens* next;
+    struct tokens* prev;
+
+    uint16_t       length;
+    char           __padding[6];
+    struct token   tokens[506];
+};
+
 /**
  * @brief compares a token with a string
  * 
