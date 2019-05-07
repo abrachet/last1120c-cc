@@ -1,0 +1,14 @@
+.DS_Store
+
+*.o
+*.S
+*.s
+*.gch
+
+*.dSYM
+
+*.out
+
+old/
+
+.vscode/
