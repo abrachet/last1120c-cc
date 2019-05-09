@@ -16,12 +16,12 @@
 
 #include <sys/mman.h>
 
-#include "TokenList.hh"
+#include "TokenList.h"
 
 struct TokenizedFile {
     TokenList list;
 
-    void* const mapping;
+    const void* const mapping;
     const std::size_t file_size;
 
     const bool unmap;
@@ -37,7 +37,7 @@ struct TokenizedFile {
     ~TokenizedFile()
     {
         if (unmap)
-            (void) munmap(mapping, file_size);
+            (void) munmap((void*)mapping, file_size);
     }
 
 };

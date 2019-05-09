@@ -10,8 +10,9 @@
  */
 #pragma once
 
-#include "last-cc_assert.hh"
-#include "Token.hh"
+#include "last-cc_assert.h"
+#include "last-cc.h"
+#include "Token.h"
 
 #include <string>
 #include <stdexcept>
@@ -23,7 +24,7 @@ class ScannerTest;
 class Scanner {
     const char* file;
     std::size_t pos;
-    std::size_t len;
+    const std::size_t len;
 
     static constexpr char delim_chars[] = {
         ' ', '=', '(', ')', '*', ',',
@@ -55,7 +56,7 @@ class Scanner {
         switch(c) {
             case '=': case '<': case '>':
             case '+': case '-': case '&':
-            case '|': 
+            case '|': case ']':
                 return true;
         }
 
@@ -69,7 +70,7 @@ class Scanner {
      */
     static bool can_pair(char c) 
     {
-        if (c == '/' || c == '*')
+        if (c == '/' || c == '*' || c == '[')
             return true;
 
         return can_double(c);
@@ -148,6 +149,31 @@ class Scanner {
         return this->file[this->pos];
     }
 
+    inline const Token construct_common(char c)
+    {
+        const char* const start = this->file + this->pos;
+
+        const char* curr = start + 1;
+
+        for (; *curr != c && curr[-1] != '\\'; curr++);
+
+        return Token(start, curr - start + 1);
+    }
+
+    inline const Token construct_from_str() 
+    {
+        cc_assert(curr_char() == '\"', "construct_from_str didn't start on '\"'");
+
+        return construct_common('"');
+    }
+
+    inline const Token construct_from_char()
+    {
+        cc_assert(curr_char() == '\'', "construct_from_str didn't start on \"'\"");
+
+        return construct_common('\'');
+    }
+
 public:
 
     friend class ScannerTest;
@@ -165,11 +191,19 @@ public:
 
     Token next_token()
     {
-        if (unlikely(this->pos == len -1))
+        this->ignore_white_space();
+
+        if (unlikely(this->pos == len))
             return Token();
 
         const char* const start = this->file + this->pos;
         const char* curr = start;
+
+        if (*curr == '"')
+            return this->construct_from_str();
+
+        if (*curr == '\'')
+            return this->construct_from_char();
 
         if (delim_char(*curr))
             return this->construct_from_delim();
@@ -181,7 +215,7 @@ public:
 
         this->pos += length;
 
-        this->ignore_white_space();
+        //this->ignore_white_space();
 
         return Token(start, length);
     }

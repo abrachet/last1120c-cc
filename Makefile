@@ -3,14 +3,14 @@ WARNING = -Wall -Wshadow --pedantic -Wvla -Werror
 GCC = g++ -g -std=c++17 $(WARNING) -iquote include/
 DEFINES = -DDEBUG
 
-SRCS = #src/ScanFile.cc
+SRCS = src/ScanFile.cc
 
 # so i dont need to -B every time
 HEADERS = include/last-cc_assert.hh include/last-cc.hh include/ScanFile.hh include/Scanner.hh \
 	inlcude/Token.hh inlcude/TokenList.hh
 
 TEST_SRCS = tests/TokenTest.cc tests/TokenListTest.cc tests/ScannerTest.cc tests/ScanFileTest.cc \
-	tests/TokenizedFileTest.cc
+	tests/TokenizedFileTest.cc tests/ASTTests/ModifierTests.cc tests/ASTTests/ASTTests.cc
 
 OBJS = $(SRCS:%.cc=%.o)
 

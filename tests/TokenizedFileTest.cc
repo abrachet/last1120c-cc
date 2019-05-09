@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "TokenList.hh"
-#include "TokenizedFile.hh"
+#include "TokenList.h"
+#include "TokenizedFile.h"
 
 #include <fcntl.h>
 #include <sys/stat.h>

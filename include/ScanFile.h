@@ -10,12 +10,12 @@
  */
 #pragma once
 
-#include <optional>
+#include "TokenizedFile.h"
 
 /**
  * @brief Returns a list of all scanned tokens from a file
  * 
  * @param filename name of file to 
- * @return TokenList& {} if the file doesn't exist. Errno will be set
+ * @return valid if valid file, none if invalid file
  */
-auto scan_file(const char* filename) noexcept;
+TokenizedFile scan_file(const char* filename) noexcept(false);

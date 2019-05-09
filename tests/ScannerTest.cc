@@ -1,5 +1,5 @@
 
-#include "Scanner.hh"
+#include "Scanner.h"
 #include <gtest/gtest.h>
 
 class ScannerTest : public ::testing::Test
@@ -82,13 +82,13 @@ TEST(ScannerTest, MultipleComments)
 
     EXPECT_EQ(ScannerTest::get_curr_char(s), 'a');
 
-    s = Scanner("/* comment */  /* */a", 21);
+    Scanner s1("/* comment */  /* */a", 21);
 
-    EXPECT_EQ(ScannerTest::get_curr_char(s), 'a');
+    EXPECT_EQ(ScannerTest::get_curr_char(s1), 'a');
 
-    s = Scanner("//  \n /* */a", 12);
+    Scanner s2("//  \n /* */a", 12);
 
-    EXPECT_EQ(ScannerTest::get_curr_char(s), 'a');
+    EXPECT_EQ(ScannerTest::get_curr_char(s2), 'a');
 }
 
 TEST(ScannerTest, MalformedComment)
@@ -122,4 +122,36 @@ TEST(ScannerTest, MultiCharOperators)
     EXPECT_EQ(s.next_token(), expected_pp);
     EXPECT_EQ(s.next_token(), expected_i);
     EXPECT_EQ(s.next_token(), expected_sc);
+}
+
+TEST(ScannerTest, Strings)
+{
+    Scanner s("char a[] = \"hello\";\nint b = 4;", 30);
+
+    Token ex_char("char", 4);
+    Token ex_a("a", 1);
+    Token ex_brack("[]", 2);
+    Token ex_eq("=", 1);
+    Token ex_str("\"hello\"", 7);
+
+    EXPECT_EQ(s.next_token(), ex_char);
+    EXPECT_EQ(s.next_token(), ex_a);
+    EXPECT_EQ(s.next_token(), ex_brack);
+    EXPECT_EQ(s.next_token(), ex_eq);
+    EXPECT_EQ(s.next_token(), ex_str);
+}
+
+TEST(ScannerTest, CharLit)
+{
+    Scanner s("char a = 'a';", 13);
+
+    Token ex_char("char", 4);
+    Token ex_a("a", 1);
+    Token ex_eq("=", 1);
+    Token ex_ac("'a'", 3);
+
+    EXPECT_EQ(s.next_token(), ex_char);
+    EXPECT_EQ(s.next_token(), ex_a);
+    EXPECT_EQ(s.next_token(), ex_eq);
+    EXPECT_EQ(s.next_token(), ex_ac);
 }

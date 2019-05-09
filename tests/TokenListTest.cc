@@ -2,7 +2,7 @@
 
 #include <unistd.h> // getpagesize(3)
 
-#include "TokenList.hh"
+#include "TokenList.h"
 
 class TokenListTest : public ::testing::Test {
 

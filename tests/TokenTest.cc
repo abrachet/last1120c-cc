@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "Token.hh"
+#include "Token.h"
 
 TEST(TokenTest, DefaultCtor)
 {

@@ -18,7 +18,7 @@
 #include <cassert>
 #include <string>
 
-struct Token {
+struct alignas(uintptr_t) Token {
 private:
     std::uintptr_t    start:48;  ///< const char *, start of the string
     std::size_t        size:16;  ///< size of the string
@@ -54,6 +54,9 @@ public:
 
     std::string to_string() const
     {
+        if (this->start == 0)
+            return "";
+
         return std::string((const char*)this->start, 0, this->size);
     }
 };

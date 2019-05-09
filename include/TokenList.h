@@ -20,8 +20,8 @@
 
 #include <sys/mman.h>
 
-#include "last-cc_assert.hh"
-#include "Token.hh"
+#include "last-cc_assert.h"
+#include "Token.h"
 
 // forward decl to be friend class for testing
 class TokenListTest;
