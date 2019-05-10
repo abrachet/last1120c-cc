@@ -14,10 +14,8 @@
 #include "Token.h"
 #include "Modifier.h"
 
-class LocalVar {
+struct Variable {
     Modifier modifier;
     Type  type;
     Token name;
-
-    
 };

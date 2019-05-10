@@ -23,8 +23,8 @@
 class Type;
 
 // int should be wordsize because in early versions of c 
-//static const Type builtin_int (Token("int", 3), INT_WIDTH);
-//static const Type builtin_char(Token("char", 4), 1);
+static const Type builtin_int(Token("int", 3), INT_WIDTH);
+static const Type builtin_char(Token("char", 4), 1);
 
 class Type {
     const Token name;

@@ -14,20 +14,25 @@
 #include "AbstractVisitor.h"
 #include "Token.h"
 #include "LocalVar.h"
+#include "NodeList.h"
 #include "Type.h"
+#include "AST/Tags.h"
 #include <vector>
 
 class FunctionDecl : public Decl {
     Type return_type;
     Token function_name;
 
-    std::vector<Token> extern_symbols;
-    std::vector<LocalVar> variables;
+    NodeList statements;
 
+    
 public:
 
+    using ast_tag = AstTag::recursive_tag;
+
+
     FunctionDecl(Token name)
-    : function_name(name), return_type(Type(Token("int", 3), 8))
+    : return_type(Type(Token("int", 3), 8)), function_name(name)
     {}
 
     virtual ~FunctionDecl() {}

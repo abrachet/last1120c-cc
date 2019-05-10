@@ -13,5 +13,7 @@
 #include "ASTNodeBase.h"
 
 class Stmt : public ASTNodeBase {
+public:
     virtual void accept(AbstractVisitor& av) = 0;
+    virtual ~Stmt() {}
 };

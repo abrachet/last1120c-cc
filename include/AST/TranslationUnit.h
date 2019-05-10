@@ -13,11 +13,14 @@
 #include "ASTNodeBase.h"
 #include "NodeList.h"
 #include "last-cc_assert.h"
+#include <vector>
+#include <memory>
 #include <string>
 #include <type_traits>
 
 class TranslationUnit {
     const std::string filename;
+
     NodeList global_declarations;
 
 public:
@@ -33,8 +36,12 @@ public:
         global_declarations.push_back(std::make_unique<T>(node));
     }
 
+    using iterator = void;
+    using iterator_category = std::bidirectional_iterator_tag;
+
     const NodeList& get_decls()
     {
         return this->global_declarations;
     }
+
 };

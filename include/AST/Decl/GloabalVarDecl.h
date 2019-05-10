@@ -10,14 +10,18 @@
  */
 #pragma once
 
-#include "Decl.h"
+#include "AST/Decl.h"
+#include "AST/Tags.h"
 #include "Token.h"
 #include <cstddef>
 
 class GlobalVarDecl : public Decl {
-public:
     Token name;
     register_t initial_value;
+
+public:
+
+    using ast_tag = AstTag::recursive_tag;
 
     GlobalVarDecl(Token name, register_t init = 0)
     : name(name), initial_value(init)

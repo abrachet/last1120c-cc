@@ -14,4 +14,4 @@
 #include <vector>
 #include <memory>
 
-using NodeList = std::vector<std::unique_ptr<ASTNodeBase>>;
+using NodeList = std::vector<std::shared_ptr<ASTNodeBase>>;

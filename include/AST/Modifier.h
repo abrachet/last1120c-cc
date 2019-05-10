@@ -18,7 +18,8 @@ public:
         None     = 0,
         FuncArgs = 1 << 0,
         Register = 1 << 1,
-        Auto     = 1 << 2
+        Auto     = 1 << 2,
+        Pointer  = 1 << 3
     };
 
     Modifier() : modifiers(None)

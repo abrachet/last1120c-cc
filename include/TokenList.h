@@ -85,7 +85,7 @@ private:
 
         friend TokenList;
 
-        using iterator_categor = std::bidirectional_iterator_tag;
+        using iterator_category = std::bidirectional_iterator_tag;
 
         const_iterator& operator++() noexcept
         {

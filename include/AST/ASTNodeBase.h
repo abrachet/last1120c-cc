@@ -10,10 +10,14 @@
  */
 #pragma once
 
+#include "Tags.h"
+
 class AbstractVisitor;
 
 class ASTNodeBase {
 public:
+
+    using ast_tag = AstTag::undefined_tag;
 
     virtual void accept(AbstractVisitor&) = 0;
     virtual ~ASTNodeBase() {}
