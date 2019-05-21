@@ -10,8 +10,8 @@
  */
 #pragma once
 
-#include "ASTNodeBase.h"
-#include "AbstractVisitor.h"
+#include "AST/ASTNodeBase.h"
+#include "AST/AbstractVisitor.h"
 
 class Decl : public ASTNodeBase {
 public:

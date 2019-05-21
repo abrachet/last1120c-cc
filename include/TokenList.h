@@ -73,15 +73,25 @@ private:
         const TokenList* cur_list;
         bool inacessable;
 
-        const_iterator(const TokenList* list) 
-        : pos(0), cur_list(list), inacessable(false)
+        const_iterator(const TokenList* list, std::size_t pos = 0) 
+        : pos(pos), cur_list(list), inacessable(false)
         {}
 
-        const_iterator(const TokenList* list, std::size_t pos) 
-        : pos(pos), cur_list(list)
-        {}
+        
 
     public:
+
+        // this is the 'false' iterator, used by the parser 
+        // to mean that the path did not match
+        constexpr const_iterator() 
+        : pos(-1), cur_list(nullptr), inacessable(true)
+        {}
+
+        constexpr const_iterator(bool b)
+        : pos(-1), cur_list(nullptr), inacessable(true)
+        {
+            cc_assert(!b, "cannot initiliaze with boolean literal true");
+        } 
 
         friend TokenList;
 
@@ -125,8 +135,15 @@ private:
             return *this; 
         }
 
-        inline bool operator==(const_iterator& t) const noexcept
+        inline bool operator==(const_iterator t) const noexcept
         {
+            #if 0
+            std::cerr << "operator==() was called\n" 
+                "t.pos: " << t.pos << " this->pos: " << this->pos
+                << "\nt.cur_list: " << t.cur_list << " this->cur_list: " <<
+                this->cur_list << std::endl;
+            #endif
+            
             return t.pos == this->pos && t.cur_list == this->cur_list;
         }
 
@@ -135,20 +152,51 @@ private:
             return !(*this == t);
         }
 
+        /// TODO: Fix this to use a better way than just operator++
+        const_iterator operator+(int num)
+        {
+            cc_assert(num > 0, "cannot add negative");
+
+            auto a = *this;
+            for (int i = 0; i < num; i++)
+                ++a;
+            
+            return a;
+        }
+
+        const_iterator operator-(int num)
+        {
+            cc_assert(num > 0, "cannot add negative");
+
+            auto a = *this;
+            for (int i = num; i > 0; i--)
+                --a;
+            
+            return a;
+        }
+
+        inline operator bool() const noexcept
+        {
+            return this->pos != -1 && this->cur_list != nullptr;
+        }
+
         inline const Token operator*() const
         {
-            if (inacessable)
-                cc_assert(0, "tried to access end or cend");
+            cc_assert(!inacessable, "tried to access end or cend");
 
             return (this->cur_list->tokens[this->pos]);
         }
 
         inline const Token* operator->() const
         {
-            if (inacessable)
-                cc_assert(0, "tried to access end or cend");
+            cc_assert(!inacessable, "tried to access end or cend");
 
             return this->cur_list->tokens.array.data() + this->pos;
+        }
+
+        void print_it() const
+        {
+            std::cout << "cur list: " << this->cur_list << " pos: " << this->pos << std::endl;
         }
     };
 
@@ -179,6 +227,8 @@ private:
     ArrayVec                 tokens;
 
 public:
+
+    using iterator = const_iterator;
 
     friend class TokenListTest;
     

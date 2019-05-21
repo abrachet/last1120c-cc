@@ -10,6 +10,8 @@
  */
 #pragma once
 
+#include <stdexcept>
+
 #define STRINGIZE(x) STRINGIZE2(x)
 #define STRINGIZE2(x) #x
 #define LINE_STRING STRINGIZE(__LINE__)
@@ -18,7 +20,7 @@
 #define cc_assert(e, message) \
     static_cast<bool>(e) ? \
         (void) 0 : \
-        throw ( "cc assertation failed: " #e message "[" __FILE__ ":" LINE_STRING "]" )
+        throw std::runtime_error( "cc assertation failed: " #e " | " message " [" __FILE__ ":" LINE_STRING "]" )
 #else
 #define cc_assert(e, message) (void) 0
 #endif

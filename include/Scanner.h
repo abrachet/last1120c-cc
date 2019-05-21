@@ -70,7 +70,7 @@ class Scanner {
      */
     static bool can_pair(char c) 
     {
-        if (c == '/' || c == '*' || c == '[')
+        if (c == '/' || c == '*' || c == '[' || c == '!')
             return true;
 
         return can_double(c);
@@ -104,7 +104,7 @@ class Scanner {
                 if (find[1] == '*') {
                     find += 2;
                     length += 2;
-                    for(; find[0] != '*' && find[1] != '/'; find++, length++);
+                    for(; find[0] != '*' || find[1] != '/'; find++, length++);
                     length += 2;
                     goto out;
                 }
@@ -124,7 +124,6 @@ class Scanner {
 
     const Token construct_from_delim()
     {
-
         #define inc_and_ret(start, inc) \
         do {                            \
             const Token t(start, inc);  \
@@ -205,11 +204,20 @@ public:
         if (*curr == '\'')
             return this->construct_from_char();
 
+        // array subscripting. quick fix obvious bugs here
+        if (*curr == '[') {
+            for (; *curr != ']'; curr++);
+            curr++;
+            goto done;
+        }
+
         if (delim_char(*curr))
             return this->construct_from_delim();
         
 
         for (; !delim_char(*curr); curr++);
+
+done:
 
         const std::size_t length = curr - start;
 

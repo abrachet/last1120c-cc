@@ -15,7 +15,15 @@
 #include "Modifier.h"
 
 struct Variable {
-    Modifier modifier;
-    Type  type;
     Token name;
+    Type  type;
+
+    Variable(Type t, Token name = Token("<unnamed>", 10))
+    : name(name), type(t)
+    {}
+
+    Variable(Token name, 
+        Type type = BuiltinTypes::builtin_int) 
+    : name(name), type(type)
+    {}
 };

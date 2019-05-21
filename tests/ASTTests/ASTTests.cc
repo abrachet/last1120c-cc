@@ -2,8 +2,8 @@
 
 #include "AST/AbstractVisitor.h"
 #include "AST/TranslationUnit.h"
-#include "AST/GloabalVarDecl.h"
-#include "AST/FunctionDecl.h"
+#include "AST/Decl/GlobalVarDecl.h"
+#include "AST/Decl/FunctionDecl.h"
 #include <string>
 
 TEST(TUTest, Ctor)
@@ -44,7 +44,6 @@ TEST(TUTest, Insert)
     for (int i = 0; i < decls.size(); i++)
         decls[i]->accept(visitor);
     
-
     ASSERT_EQ(visitor.init_value, 3);
     ASSERT_EQ(visitor.func_name, "main");
 

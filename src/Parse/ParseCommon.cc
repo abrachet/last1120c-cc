@@ -24,11 +24,13 @@ variable_declaration(TokenList::iterator iter, std::vector<Variable>& v)
     cc_assert(v.empty(), "expected empty vector");
 
     Type t = BuiltinTypes::builtin_int;
-    if ( !(potential = type(iter, t)) )
-        return false;
-
-    iter = potential;
+    if ( (potential = type(iter, t)) )
+        iter = potential;
+    else if ( *iter == ParseUtil::LiteralTokens::EXTERN || 
+              *iter == ParseUtil::LiteralTokens::AUTO )
+        ++iter;
     
+
     for (; *iter != ParseUtil::LiteralTokens::SEMI_COLON; ) {
         if (ParseUtil::is_known(*iter))
             return false;
@@ -37,15 +39,15 @@ variable_declaration(TokenList::iterator iter, std::vector<Variable>& v)
 
         ++iter; 
         if (*iter == ParseUtil::LiteralTokens::POINTER) {
-            curr.modifier |= Modifier::Pointer;
+            curr.type.add_to_modifier(Modifier::Pointer);
             ++iter;
         }
 
-        v.push_back(curr);
+        v.push_back(std::move(curr));
         if (*iter == ParseUtil::LiteralTokens::COMMA)
             ++iter;
     }
-    
+
     cc_assert(*iter == ParseUtil::LiteralTokens::SEMI_COLON, "");
 
     return ++iter;

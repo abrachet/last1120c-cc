@@ -155,3 +155,63 @@ TEST(ScannerTest, CharLit)
     EXPECT_EQ(s.next_token(), ex_eq);
     EXPECT_EQ(s.next_token(), ex_ac);
 }
+
+TEST(ScannerTest, EqualsPlus)
+{
+    Scanner s("a =+ 5;", 13);
+
+    Token ex_a("a", 1);
+    Token ex_ep("=+", 2);
+    Token ex_5("5", 1);
+
+    EXPECT_EQ(s.next_token(), ex_a);
+    EXPECT_EQ(s.next_token(), ex_ep);
+    EXPECT_EQ(s.next_token(), ex_5);
+
+    Scanner s1("a += 5;", 13);
+
+    Token ex_pe("+=", 2);
+
+    EXPECT_EQ(s1.next_token(), ex_a);
+    EXPECT_EQ(s1.next_token(), ex_pe);
+    EXPECT_EQ(s1.next_token(), ex_5);
+}
+
+TEST(ScannerTest, SplitProperly)
+{
+    Scanner s("if (*p!=20);", 13);
+
+    Token ex_if("if", 2);
+    Token ex_lp("(", 1);
+    Token ex_ind("*", 1);
+    Token ex_p("p", 1);
+    Token ex_ne("!=", 2);
+    Token ex_20("20", 2);
+    Token ex_rp(")", 1);
+    Token ex_sc(";", 1);
+    
+
+    EXPECT_EQ(s.next_token(), ex_if);
+    EXPECT_EQ(s.next_token(), ex_lp);
+    EXPECT_EQ(s.next_token(), ex_ind);
+    EXPECT_EQ(s.next_token(), ex_p);
+    EXPECT_EQ(s.next_token(), ex_ne);
+    EXPECT_EQ(s.next_token(), ex_20);
+    EXPECT_EQ(s.next_token(), ex_rp);
+    EXPECT_EQ(s.next_token(), ex_sc);
+}
+
+TEST(ScannerTest, ArraySubscript)
+{
+    Scanner s("a[6] = 3;", 13);
+
+    Token ex_a("a", 1);
+    Token ex_sub("[6]", 3);
+    Token ex_eq("=", 1);
+    Token ex_3("3", 1);
+
+    EXPECT_EQ(s.next_token(), ex_a);
+    EXPECT_EQ(s.next_token(), ex_sub);
+    EXPECT_EQ(s.next_token(), ex_eq);
+    EXPECT_EQ(s.next_token(), ex_3);
+}

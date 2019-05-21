@@ -1,0 +1,8 @@
+/*
+    From last1120c/c00.c
+*/
+
+regtab 0;
+efftab 1;
+cctab 2;
+sptab 3;

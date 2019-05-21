@@ -1,0 +1,13 @@
+/*
+    Alex Brachet (abrachet@purdue.edu)
+
+    Testing functions with arguemnts that have types other than int
+
+*/
+
+func (a, b, c, d)
+int a[], c;
+char d;
+{
+
+}

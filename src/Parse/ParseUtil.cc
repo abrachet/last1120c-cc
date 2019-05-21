@@ -34,7 +34,7 @@ long parse_number(Token t) noexcept(false)
         negative = -1;
     }
 
-    auto try_fail = [&](int base) -> long {
+    auto try_fail = [negative, start, t](int base) -> long {
         char* endptr = nullptr;
 
         long ret = std::strtol(start, &endptr, base);
@@ -59,4 +59,23 @@ long parse_number(Token t) noexcept(false)
     }
 
     return try_fail(10);
+}
+
+bool
+__get_array_subscript(Token tok, int64_t& i)
+{
+    assert(tok[0] == '[' && "not array subscript");
+
+    if (!ParseUtil::is_array_subscript(tok))
+        return false;
+
+    const char* start = reinterpret_cast<const char*>(tok.start + 1);
+
+    try {
+        i = ParseUtil::parse_number(Token(start, tok.get_size() - 2));
+    } catch (...) {
+        return false;
+    }
+
+    return true;
 }

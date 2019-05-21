@@ -28,8 +28,6 @@ public:
     : tokens(std::move(tokens))
     {}
 
-    ~AutoStmt() {}
-
     void accept(AbstractVisitor& av) override {
         av.visit(*this);
     }

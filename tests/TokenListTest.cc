@@ -61,6 +61,14 @@ TEST(TokenListTest, InvalidIterDereference)
     auto it = tl.rend();
 
     EXPECT_ANY_THROW(*it);
+
+    tl.push_back(Token("tok", 3));
+
+    it = tl.begin();
+    ++it;
+    ++it;
+
+    EXPECT_ANY_THROW(*it);
 }
 
 TEST(TokenListTest, IterLength)
@@ -122,4 +130,37 @@ TEST(TokenListTest, Retrieval)
 
     for (auto i : to_free)
         free(i);
+}
+
+TEST(TokenListTest, IteratorOperatorBool)
+{
+    TokenList::iterator it;
+
+    ASSERT_FALSE(it);
+
+    TokenList tl;
+
+    for (int i = 0; i < 5; i++)
+        tl.push_back(Token("tok", 3));
+
+    auto iter = tl.begin();
+
+    ASSERT_TRUE(iter);
+}
+
+
+TEST(TokenListTest, IterEnd)
+{
+    TokenList tl;
+
+    for (int i = 0; i < 3; i++)
+        tl.push_back(Token("tok", 3));
+
+
+    auto it = tl.begin();
+    for (int i = 0; i < 3; i++)
+        ++it;
+
+    bool b = it == tl.end();
+    ASSERT_TRUE(b);
 }

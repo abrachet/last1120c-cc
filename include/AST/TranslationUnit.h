@@ -39,7 +39,7 @@ public:
     using iterator = void;
     using iterator_category = std::bidirectional_iterator_tag;
 
-    const NodeList& get_decls()
+    const NodeList& get_decls() const
     {
         return this->global_declarations;
     }

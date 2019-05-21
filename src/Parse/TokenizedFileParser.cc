@@ -43,8 +43,6 @@ TranslationUnit parse_tokenized_file(TokenizedFile& tf)
             continue;
         }
 
-        std::cout << "On token: " << it->to_string() << '\n';
-
         if (it != end)
             throw "invalid source file";
     }

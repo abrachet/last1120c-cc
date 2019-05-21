@@ -1,13 +1,12 @@
 .DS_Store
 
 *.o
-*.S
-*.s
+*.out
+gv
+eye_test.cc
 *.gch
 
 *.dSYM
-
-*.out
 
 old/
 

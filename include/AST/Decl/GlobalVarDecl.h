@@ -10,7 +10,7 @@
  */
 #pragma once
 
-#include "AST/Decl.h"
+#include "Decl.h"
 #include "AST/Tags.h"
 #include "Token.h"
 #include <cstddef>
@@ -18,23 +18,39 @@
 class GlobalVarDecl : public Decl {
     Token name;
     register_t initial_value;
+    bool array;
 
 public:
 
     using ast_tag = AstTag::recursive_tag;
 
-    GlobalVarDecl(Token name, register_t init = 0)
-    : name(name), initial_value(init)
+    /**
+     * @brief Construct a new Global Var Decl object
+     * 
+     * @param name 
+     * @param init 
+     * @param array if array is true then init represents the number of elements in the array
+     */
+    GlobalVarDecl(Token name, register_t init = 0, bool array = false)
+    : name(name), initial_value(init), array(array)
     {}
 
-    virtual ~GlobalVarDecl() {}
-
-    virtual void accept(AbstractVisitor& av) override {
+    void accept(AbstractVisitor& av) override {
         av.visit(*this);
     }
-
+    
     register_t get_value()
     {
         return this->initial_value;
+    }
+
+    Token get_token()
+    {
+        return this->name;
+    }
+
+    bool is_array()
+    {
+        return this->array;
     }
 };

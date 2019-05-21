@@ -10,24 +10,26 @@
  */
 #pragma once
 
+#include "TokenList.h"
+#include <sys/mman.h>
 #include <cstddef>
 #include <memory>
 #include <utility>
-
-#include <sys/mman.h>
-
-#include "TokenList.h"
+#include <string>
 
 struct TokenizedFile {
     TokenList list;
 
     const void* const mapping;
     const std::size_t file_size;
+    const std::string filename;
 
     const bool unmap;
 
-    TokenizedFile(TokenList& list, void* file, std::size_t len) 
-    : list(std::move(list)), mapping(file), file_size(len), unmap(true)
+    TokenizedFile(TokenList& list, void* file = nullptr, 
+        std::size_t len = 0, std::string filename = "") 
+    : list(std::move(list)), mapping(file), file_size(len), 
+      filename(filename), unmap(file != nullptr)
     {}
 
     TokenizedFile(TokenList& list)
@@ -36,8 +38,10 @@ struct TokenizedFile {
 
     ~TokenizedFile()
     {
-        if (unmap)
+        if (unmap) {
+            assert(mapping && "would have tried to munmap a nullptr");
             (void) munmap((void*)mapping, file_size);
+        }
     }
 
 };

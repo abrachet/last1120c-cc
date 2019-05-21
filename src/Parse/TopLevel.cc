@@ -26,7 +26,7 @@ global_var(TokenList::iterator iter, TranslationUnit& tu)
         return false;
 
     Token name = *iter;
-    long num = 0;
+    int64_t num = 0;
     bool array = false;
 
     ++iter;
@@ -47,17 +47,12 @@ global_var(TokenList::iterator iter, TranslationUnit& tu)
     if ( (potential = expect_number(iter)) ) {
         iter = potential;
     // form 'name [<%d>];' to define a zero'd array on data segment
-    } else if (*iter == ParseUtil::LiteralTokens::LEFT_SQ_BRACK) {
-        ++iter;
-        if ( (potential = expect_number(iter)) )
-            iter = potential;
-        else
-            return false;
-
-        if (*iter != ParseUtil::LiteralTokens::RIGHT_SQ_BRACK) 
-            return false;
-
+    } else if (ParseUtil::is_array_subscript(*iter)) {
         array = true;
+        if (!ParseUtil::get_array_subscript(*iter, num)) {
+            // TODO error
+            return false;
+        }
         ++iter;
     }
 
@@ -109,6 +104,10 @@ function(TokenList::iterator iter, TranslationUnit& tu)
     iter = arg_types(iter, arguments);
     cc_assert(iter, "didn't find '{'");
 
+    for (auto& i : arguments)
+        i.type.add_to_modifier(Modifier::FuncArgs);
+
+
     func.add_arguments(arguments);
 
     parse_function(iter, func);
@@ -121,27 +120,19 @@ function(TokenList::iterator iter, TranslationUnit& tu)
 TokenList::iterator
 arg_types(TokenList::iterator iter, std::vector<Variable>& vec)
 {
-    //TokenList::iterator potential;
-
-    std::for_each(vec.begin(), vec.end(), [](Variable v) {
-        v.modifier |= Modifier::FuncArgs;
-    });
-
-    // we look through the vector that we just got 
     auto assign_to_vec = [&vec](std::vector<Variable>& v) -> bool {
         auto contains = [&vec](Token var_name) {
-            return std::find_if(vec.begin(), vec.end(), [var_name](Variable var) {
+            return std::find_if(vec.begin(), vec.end(), [var_name](Variable& var) {
                 return var.name == var_name;
             });
         };
 
-        for (auto& i : v) {
-            auto it = contains(i.name);
-            if (it == vec.end())
+        for (const auto& i : v) {
+            auto found = contains(i.name);
+            if (found == vec.end())
                 return false;
 
-            it->type = i.type;
-            it->modifier |= i.modifier;
+            *found = i;
         }
 
         return true;
@@ -154,7 +145,8 @@ arg_types(TokenList::iterator iter, std::vector<Variable>& vec)
         if (!iter)
             return false;
 
-        assign_to_vec(curr);
+        if (!assign_to_vec(curr))
+            return false;
     }
 
     cc_assert(*iter == ParseUtil::LiteralTokens::LEFT_CR_BRACK, "");

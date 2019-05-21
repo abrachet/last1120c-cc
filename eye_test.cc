@@ -6,7 +6,7 @@
 
 int main()
 {
-    TokenizedFile tf = scan_file("c01_test.c");
+    TokenizedFile tf = scan_file("tests/global_var.c.test");
 
     for (auto i : tf.list)
         std::cout << i.to_string() << std::endl;

@@ -22,10 +22,10 @@ public:
         Pointer  = 1 << 3
     };
 
-    Modifier() : modifiers(None)
+    constexpr Modifier() : modifiers(None)
     {}
 
-    Modifier(Modifiers modifiers ) 
+    constexpr Modifier(Modifiers modifiers ) 
     : modifiers(modifiers) 
     {}
 
@@ -60,24 +60,34 @@ public:
         this->modifiers = (Modifiers) m;
     }
 
-    inline bool is_none()
+    inline bool is_none() const
     {
-        return this->modifiers & None;
+        return static_cast<Type>(this->modifiers) == 0;
     }
 
-    inline bool is_func_arg()
+    inline bool is_func_arg() const
     {
         return this->modifiers & FuncArgs;
     }
 
-    inline bool is_register()
+    inline bool is_register() const
     {
         return this->modifiers & Register;
     }
 
-    inline bool is_auto()
+    inline bool is_auto() const
     {
         return this->modifiers & Auto;
+    }
+
+    inline bool is_pointer() const
+    {
+        return this->modifiers & Pointer;
+    }
+
+    inline bool operator==(Modifier m) const
+    {
+        return this->modifiers == m.modifiers;
     }
 
 private:

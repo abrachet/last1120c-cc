@@ -10,41 +10,63 @@
  */
 #pragma once
 
-#include "Decl.h"
-#include "AbstractVisitor.h"
 #include "Token.h"
-#include "LocalVar.h"
-#include "NodeList.h"
-#include "Type.h"
+#include "Decl.h"
+#include "AST/Type.h"
+#include "AST/NodeList.h"
+#include "AST/AbstractVisitor.h"
 #include "AST/Tags.h"
+#include "AST/Variable.h"
 #include <vector>
 
 class FunctionDecl : public Decl {
-    Type return_type;
-    Token function_name;
+    const Type return_type;
+    const Token function_name;
+
+    std::vector<Variable> arguments;
 
     NodeList statements;
 
-    
 public:
 
     using ast_tag = AstTag::recursive_tag;
 
-
-    FunctionDecl(Token name)
-    : return_type(Type(Token("int", 3), 8)), function_name(name)
+    FunctionDecl(Token function_name, Type return_type = BuiltinTypes::builtin_int)
+    : return_type(return_type), function_name(function_name)
     {}
 
-    virtual ~FunctionDecl() {}
+    FunctionDecl(const FunctionDecl &) = default;
 
-    virtual void accept(AbstractVisitor& av) override {
+    FunctionDecl& operator=(const FunctionDecl &) = default;
+
+    void accept(AbstractVisitor& av) override {
         av.visit(*this);
     }
 
+    inline const std::vector<Variable>& get_args() const
+    {
+        return arguments;
+    }
+
+    inline void add_arguments(std::vector<Variable> vec)
+    {
+        arguments.insert(arguments.end(), vec.begin(), vec.end());
+    }
+
+    inline void add_argument(Variable v)
+    {
+        this->arguments.push_back(v);
+    }
+
     
-    Token get_name() 
+    inline const Token get_name() const noexcept
     {
         return this->function_name;
+    }
+
+    inline void add_statment(std::shared_ptr<ASTNodeBase> stmt) 
+    {
+        statements.push_back(std::move(stmt));
     }
 
 };

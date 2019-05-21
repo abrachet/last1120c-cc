@@ -22,9 +22,7 @@ class Expr : public ASTNodeBase {
 public:
     using ast_tag = AstTag::leaf_tag;
 
-    virtual ~Expr() {}
-
-    virtual void accept(AbstractVisitor& av) {
+    void accept(AbstractVisitor& av) override {
         av.visit(*this);
     }
 };

@@ -23,6 +23,7 @@
 TranslationUnit parse_tokenized_file(TokenizedFile&);
 
 long parse_number(Token t) noexcept(false);
+bool __get_array_subscript(Token, int64_t&);
 
 namespace ParseUtil {
 
@@ -41,6 +42,7 @@ _constexpr Token CHAR("char", 4);
 
 _constexpr Token POINTER("[]", 2);
 _constexpr Token INDIRECTION("*", 1);
+_constexpr Token ADDRESSOF("&", 1);
 
 _constexpr Token IF("if", 2);
 _constexpr Token ELSE("else", 4);
@@ -74,6 +76,9 @@ _constexpr Token MULTIPLICATION("*", 1);
 _constexpr Token DIVISION("/", 1); 
 
 _constexpr Token EQUALITY("==", 2);
+_constexpr Token INEQUALITY("!=", 2);
+
+_constexpr Token LOGICAL_NOT("!", 1);
 
 #undef _constexpr
 
@@ -88,7 +93,7 @@ static inline bool is_type(Token t)
 static inline bool is_math_operator(Token t)
 {
     using namespace LiteralTokens;
-    return t == ASSIGNMENT  || t == MULTIPLICATION
+    return t == ADDITION    || t == MULTIPLICATION
         || t == SUBTRACTION || t == DIVISION;
 }
 
@@ -110,9 +115,8 @@ static bool is_operator(Token t)
 
     using namespace LiteralTokens;
     return (t == POINTER || t == INDIRECTION || t == COMMA ||
-    t == COLON || t == SEMI_COLON || t == EQUALITY || t == LEFT_PAREN ||
-    t == RIGHT_PAREN || t == LEFT_SQ_BRACK || t == RIGHT_SQ_BRACK ||
-    t == LEFT_CR_BRACK || t == RIGTH_CR_BRACK || t == EQUALITY);
+    t == COLON || t == SEMI_COLON || t == EQUALITY || 
+    t == EQUALITY || t == ASSIGNMENT);
 }
 
 static inline bool is_known(Token t)
@@ -185,6 +189,18 @@ parse_list(TokenList::iterator iter, std::function<parse_t(Token)> f,
 static inline std::vector<Token> 
 parse_token_list(TokenList::iterator iter, Token end = LiteralTokens::SEMI_COLON) {
     return parse_list<Token>(iter, [](Token t) { return t; }, end);
+}
+
+static bool
+is_array_subscript(Token tok)
+{
+    return tok[0] == '[' && tok[tok.get_size()-1] == ']';
+}
+
+static bool
+get_array_subscript(Token tok, int64_t& i)
+{
+    return ::__get_array_subscript(tok, i);
 }
 
 } // namespace ParseUtil
