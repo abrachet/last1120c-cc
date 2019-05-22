@@ -15,9 +15,12 @@
 #include "AST/Decl/FunctionDecl.h"
 #include "AST/Expr/BinaryOperator.h"
 #include "AST/Expr/SingleTokenExpr.h"
+#include "AST/Expr/NumberExpr.h"
 #include "UserError.h"
 #include <queue>
+#include <deque>
 #include <stack>
+#include <typeinfo>
 
 
 TokenList::iterator 
@@ -69,7 +72,7 @@ parse_math_expr(TokenList::iterator iter, std::shared_ptr<Expr>& expr, UserError
 }
 
 TokenList::iterator
-shunting_yard(TokenList::iterator iter, std::queue<Token>& output_queue, 
+shunting_yard(TokenList::iterator iter, std::deque<Token>& output_queue, 
     UserError& error, const std::vector<Variable>& known, Token expected_end)
 {
     std::stack<Token> operator_stack;
@@ -84,7 +87,6 @@ shunting_yard(TokenList::iterator iter, std::queue<Token>& output_queue,
 
     auto pop = [&operator_stack]() -> Token {
         Token t = operator_stack.top();
-        std::cout << "just popped " << t.to_string() << '\n';
         operator_stack.pop();
         return t;   
     };
@@ -110,11 +112,6 @@ shunting_yard(TokenList::iterator iter, std::queue<Token>& output_queue,
             return false;
 
         auto top = operator_map.find(operator_stack.top());
-        if (top == operator_map.end()) {
-            std::string s = operator_stack.top().to_string();
-            std::cout << s << "\n";
-            abort();
-        }
         assert(top != operator_map.end() && "not found in map");
 
         auto cmp = operator_map.find(*iter);
@@ -141,54 +138,93 @@ shunting_yard(TokenList::iterator iter, std::queue<Token>& output_queue,
     };
 
     for (; *iter != expected_end; ++iter) {
-        if (number()) {
-            output_queue.push(*iter);
-            std::cout << "(num) adding " << iter->to_string() << "\n";
-        }
+        if (number()) 
+            output_queue.push_back(*iter);
 
-        else if (func()) {
+        else if (func())
             operator_stack.push(*iter);
-            std::cout << "(func) adding " << iter->to_string() << "\n";
-        }
 
-        else if (ParseUtil::is_operator(*iter)) {
-            std::cout << iter->to_string() << " is an operator\n";
-            
+        else if (ParseUtil::is_operator(*iter)) {            
             while ( (func_on_stack() || greater_precedence() 
-            || eq_and_left()) && not_left_paren()) {
-                output_queue.push(pop());
-            }
+            || eq_and_left()) && not_left_paren())
+                output_queue.push_back(pop());
+            
             operator_stack.push(*iter);
-            std::cout << "(oper) pushing " << iter->to_string() << "\n";
         }
 
-        else if (*iter == ParseUtil::LiteralTokens::LEFT_PAREN) {
+        else if (*iter == ParseUtil::LiteralTokens::LEFT_PAREN)
             operator_stack.push(*iter);
-            std::cout << "('(') adding " << iter->to_string() << "\n";
-        } 
+        
 
         else if (*iter == ParseUtil::LiteralTokens::RIGHT_PAREN) {
             using namespace ParseUtil::LiteralTokens;
 
-            for (Token t = pop(); t != LEFT_PAREN; t = pop()) {
-                output_queue.push(t);
-                std::cout << "(')') adding " << iter->to_string() << "\n";
-            }
+            for (Token t = pop(); t != LEFT_PAREN; t = pop())
+                output_queue.push_back(t);
+            
         }
 
-        else {
-            std::cout << "Token '" << iter->to_string() << "' matched nowhere\n";
-        }
+        else 
+            assert(!"token matched nowhere");
     }
 
-    std::cout << "finished loop\n";
 
-    while (!operator_stack.empty()) {
-        output_queue.push(pop());
-        std::cout << "_ ";
-    }
-
-    std::cout << std::endl;
+    while (!operator_stack.empty())
+        output_queue.push_back(pop());
+    
 
     return iter;
+}
+
+static std::shared_ptr<BinaryOperator> 
+make_expr(Token tok)
+{
+    using namespace ParseUtil::LiteralTokens;
+
+    BinaryOperator::Type type;
+
+    if (tok == ADDITION)
+        type = BinaryOperator::Addition;
+    else if (tok == SUBTRACTION)
+        type = BinaryOperator::Subtraction;
+    else if (tok == MULTIPLICATION)
+        type = BinaryOperator::Multiplication;
+    else if (tok == EQUALITY)
+        type = BinaryOperator::Equality;
+    else {
+        std::cout << "On token: " << tok.to_string();
+        assert(!"invalid token to make expression");
+    }
+    return std::make_shared<BinaryOperator>(type);
+}
+
+std::shared_ptr<Expr> 
+rpn_to_tree(std::deque<Token>& deque)
+{
+    assert(!deque.empty() && "cant be called with empty deque");
+    Token top = deque.back();
+    deque.pop_back();
+
+    if (ParseUtil::is_number(top)) 
+        return std::make_shared<NumberExpr>(ParseUtil::parse_number(top));
+    
+    // must be a variable
+    if (!ParseUtil::is_known(top))
+        return std::make_shared<SingleTokenExpr>(top);
+
+    auto ret = make_expr(top);
+    auto right = rpn_to_tree(deque);
+    auto left  = rpn_to_tree(deque);
+
+    #pragma clang diagnostic push   
+    #pragma clang diagnostic ignored "-Wpotentially-evaluated-expression"
+
+    std::cout << "right is: " << typeid(*right.get()).name() << " left is: " << typeid(*left.get()).name() << '\n';
+
+    #pragma clang diagnostic pop
+
+    //std::cout << "current top is: " << deque.back().to_string() << '\n';
+    ret->add_children(left, right);
+
+    return ret;
 }

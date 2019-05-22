@@ -1,15 +1,27 @@
-#include "include/ScanFile.h"
-#include "include/TokenizedFile.h"
-#include "include/TokenList.h"
+#include "Parse.h"
+#include "ScanFile.h"
+#include "TokenizedFile.h"
+#include "TokenList.h"
+#include "AST/Decl/FunctionDecl.h"
+#include "AST/TranslationUnit.h"
+#include "AST/AbstractVisitor.h"
+#include "CodeGen/ARM64.h"
 
 #include <iostream>
 
 int main()
 {
-    TokenizedFile tf = scan_file("tests/global_var.c.test");
+    TokenizedFile tf = scan_file("global_var.c.test");
 
-    for (auto i : tf.list)
-        std::cout << i.to_string() << std::endl;
+    auto tu = parse_tokenized_file(tf);
+
+    auto decls = tu.get_decls();
+
+    ARM64Backend visitor("global_var.s");
+
+    for (auto& i : decls)
+        i->accept(visitor);
+
 
     return 0;
 }

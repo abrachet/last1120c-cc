@@ -9,16 +9,14 @@
  * 
  */
 
-#include "ScanFile.h"
-
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-
 #include "last-cc.h"
 #include "Scanner.h"
 #include "TokenList.h"
 #include "Token.h"
+#include "ScanFile.h"
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
 
 TokenizedFile
 scan_file(const char* filename) noexcept(false)

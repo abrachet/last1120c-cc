@@ -31,4 +31,8 @@ public:
     void accept(AbstractVisitor& av) override {
         av.visit(*this);
     }
+
+    const std::vector<Variable>& get_tokens() const {
+        return this->tokens;
+    }
 };

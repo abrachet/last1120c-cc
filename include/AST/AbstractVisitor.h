@@ -10,7 +10,6 @@
  */
 #pragma once
 
-//#include "ASTNodeBase.h"
 #include <stdexcept>
 #include <iostream>
 
@@ -24,9 +23,16 @@ class AutoStmt;
 
 class Expr;
 class ConditionalExpr;
+class BinaryOperator;
+class UnaryOperator;
+class SingleTokenExpr;
+class NumberExpr;
+class AssignmentExpr;
 
 class AbstractVisitor {
 
+    // this is better than pure virtual because in testing I dont need to 
+    // implement all of these. In any real situation this has the same effect anyway
     [[noreturn]] static void not_implemented() {
         std::cerr << "Function was visited but not overriden" << std::endl;
         std::terminate();
@@ -34,11 +40,7 @@ class AbstractVisitor {
 
 public:
     
-    virtual void visit(ASTNodeBase&) { 
-        std::cout << "visit(ASTNodeBase&)\n"; 
-        not_implemented(); 
-    }
-    
+    virtual void visit(ASTNodeBase&)     { not_implemented(); }
 
     virtual void visit(GlobalVarDecl&)   { not_implemented(); }
     virtual void visit(FunctionDecl&)    { not_implemented(); }
@@ -47,6 +49,11 @@ public:
     virtual void visit(AutoStmt&)        { not_implemented(); }
 
     virtual void visit(Expr&)            { not_implemented(); }
+    virtual void visit(AssignmentExpr&)  { not_implemented(); }
     virtual void visit(ConditionalExpr&) { not_implemented(); }
+    virtual void visit(BinaryOperator&)  { not_implemented(); }
+    virtual void visit(UnaryOperator&)   { not_implemented(); }
+    virtual void visit(SingleTokenExpr&) { not_implemented(); }
+    virtual void visit(NumberExpr&)      { not_implemented(); }
 
 };

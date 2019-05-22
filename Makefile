@@ -28,6 +28,10 @@ $(TARGET): $(OBJS)
 test: .gtest.out
 	./.gtest.out
 
+eye_test: $(OBJS) $(HEADERS)
+	$(GCC) -c eye_test.cc 
+	clang++ -g $(filter %.o,$^) eye_test.o -o eye_test
+
 clean:
 	rm -f $(OBJS)
 	rm -f $(TEST_OBJS)

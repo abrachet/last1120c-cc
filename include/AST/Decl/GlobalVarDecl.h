@@ -19,6 +19,7 @@ class GlobalVarDecl : public Decl {
     Token name;
     register_t initial_value;
     bool array;
+    bool initiliazed;
 
 public:
 
@@ -52,5 +53,10 @@ public:
     bool is_array()
     {
         return this->array;
+    }
+
+    bool is_initiliazed() 
+    {
+        return this->initiliazed;
     }
 };

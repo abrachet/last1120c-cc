@@ -17,7 +17,7 @@
 #include <cassert>
 #include <cstdarg>
 
-template <int indent_size = 8, int max_indents = 4, 
+template <int indent_size = 4, int max_indents = 4, 
     int total_buf_size = 256>
 class AsmStream {
     FILE* f;

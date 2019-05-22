@@ -17,7 +17,7 @@
 #include "AST/Variable.h"
 #include <memory>
 #include <unordered_map>
-#include <queue>
+#include <deque>
 #include <vector>
 
 class FunctionDecl;
@@ -31,7 +31,7 @@ TokenList::iterator parse_math_expr(TokenList::iterator,
                     Token expected_end = ParseUtil::LiteralTokens::SEMI_COLON);
 
 TokenList::iterator
-shunting_yard(TokenList::iterator, std::queue<Token>&, 
+shunting_yard(TokenList::iterator, std::deque<Token>&, 
     UserError&, const std::vector<Variable>&, Token expected_end = ParseUtil::LiteralTokens::SEMI_COLON);
 
 
@@ -77,3 +77,5 @@ is_operator(Token tok)
     auto it = operator_map.find(tok);
     return it != operator_map.end();
 }
+
+std::shared_ptr<Expr> rpn_to_tree(std::deque<Token>&);

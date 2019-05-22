@@ -44,7 +44,6 @@ public:
                     " | Equality");
     }
 
-
     void accept(AbstractVisitor& av) override {
         av.visit(*this);
     }
@@ -52,13 +51,23 @@ public:
     inline void 
     add_children(std::shared_ptr<Expr> l, std::shared_ptr<Expr> r)
     {
-        this->left  = std::move(l);
-        this->right = std::move(r);
+        this->left  = l;
+        this->right = r;
     }
 
     inline Type get_type() const
     {
         return this->type;
+    }
+
+    const std::shared_ptr<Expr>& get_right() const
+    {
+        return this->right;
+    }
+
+    const std::shared_ptr<Expr>& get_left() const
+    {
+        return this->left;
     }
 
 private:

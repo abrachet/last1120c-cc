@@ -1,0 +1,25 @@
+regtab 0;
+efftab 1;
+cctab 2;
+sptab 3;
+symbuf[4];
+pssiz 8;
+namsiz 8;
+nwps 4;
+hshused 0;
+hshsiz 100;
+hshlen 800;	/* 8*hshsiz */
+hshtab[800];
+space 0;
+cp 0;
+cmsiz 40;
+cmst[40];
+ctyp 0;
+isn 1;
+swsiz 120;
+swtab[120];
+swp 0;
+contlab 0;
+brklab 0;
+deflab 0;
+nreg 4;

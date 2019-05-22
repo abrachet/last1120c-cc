@@ -69,4 +69,8 @@ public:
         statements.push_back(std::move(stmt));
     }
 
+    const NodeList& get_statments() const {
+        return this->statements;
+    }
+
 };

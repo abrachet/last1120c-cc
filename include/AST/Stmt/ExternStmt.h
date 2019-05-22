@@ -27,6 +27,10 @@ public:
     : tokens(std::move(tokens))
     {}
 
+    const std::vector<Token>& get_tokens() const {
+        return this->tokens;
+    }
+
     void accept(AbstractVisitor& av) override {
         av.visit(*this);
     }

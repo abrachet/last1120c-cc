@@ -121,7 +121,7 @@ static bool is_operator(Token t)
 
 static inline bool is_known(Token t)
 {
-    return is_operator(t) || is_keyword(t);
+    return ParseUtil::is_operator(t) || is_keyword(t);
 }
 
 /**
